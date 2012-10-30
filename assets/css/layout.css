@@ -1,0 +1,59 @@
+h2, h4, p, ol, dl {
+  margin: 0;
+}
+dl {
+  overflow: auto;
+}
+  dd {
+    margin-left: 0;
+  }
+
+ol {
+  padding: 0;
+}
+
+.exceptions > dt, .exceptions h4 {
+  padding: 1em;
+  margin-top: 0.5em;
+  cursor: pointer;
+  background-color: #DDD;
+}
+.exceptions h4 {
+  padding: 0.5em;
+}
+.exceptions > dt:hover, .exceptions > dt:not(.toggled),
+.exceptions h4:hover, .exceptions h4:not(.toggled) {
+  background-color: #CFCFCF;
+}
+.exceptions .toggled + dd, .exceptions .toggled + p {
+  display: none;
+}
+  .exceptions li {
+    overflow: auto;
+    padding: 0 0 1em 2em;
+    border-bottom: 1px solid #DDD;
+  }
+  .exceptions li:last-child {
+    border-bottom: 0;
+  }
+  .exceptions li:hover {
+    background-color: #FAFAFA;
+  }
+    .exceptions li dt, .exceptions li dd {
+      margin: 0.25em 0;
+    }
+    .exceptions li dt {
+      float: left;
+      clear: left;
+      width: 150px;
+    }
+    .exceptions li dd {
+      float: left;
+      width: 800px;
+    }
+      .exceptions .trace {
+        margin: 0.25em 0 0 1em;
+      }
+        .exceptions .file {
+
+        }

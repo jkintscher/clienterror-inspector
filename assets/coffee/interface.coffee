@@ -1,12 +1,3 @@
-extract_subdomain = (url) ->
-  url.replace /https:\/\/([\w]*)\.harvestapp.*/, '$1'
-
-format_trace = (trace) ->
-  return trace unless trace?
-  trace = trace.replace /\n/g, '<br />'
-  trace.replace /\(https:\/\/[\w\/\.]*\/([\w]*\.js)\?[\d]*:[\d]*:([\d]*)\)/ig, '<small>$1:$2</small>'
-
-
 $(window).ready () ->
   unless clienterror_exceptions?
     return alert 'Could not find parsed exceptions file at `./exceptions.json`.'
@@ -18,20 +9,42 @@ $(window).ready () ->
     groups[exception.message].push exception
 
   list = $('.exceptions')
+  render list, groups
 
+  # add some small internactions to toggle long lists
+  list.find('> dt').click (e) ->
+    head = if e.target.nodeName isnt 'DT' then $(e.target).parent() else $(e.target)
+    head.toggleClass 'toggled'
+
+  list.find('.backtrace + dd h4').click (e) ->
+    $(e.target).toggleClass 'toggled'
+
+
+extract_subdomain = (url) ->
+  url.replace /https:\/\/([\w]*)\.harvestapp.*/, '$1'
+
+format_trace = (trace) ->
+  return trace unless trace?
+  trace = trace.replace /\n/g, '<br />'
+  trace.replace /\(https:\/\/[\w\/\.]*\/([\w]*\.js)\?[\d]*:[\d]*:([\d]*)\)/ig, '<small class="file">($1:$2)</small>'
+
+render = (view, groups) ->
   for message, exceptions of groups
     exceptions = exceptions.sort (a, b) -> b.time - a.time
 
-    list.append $("""
-      <dt>
+    view.append $("""
+      <dt class="toggled">
         <h2>#{message} <span class="count">(#{exceptions.length})</span></h2>
         Latest: <time>#{new Date exceptions[0].time}</time>
       </dt>
       """)
 
+    list = $('<ol />')
+    view.append $('<dd />').append(list)
+
     for exception in exceptions
       list.append $("""
-        <dd>
+        <li>
           <dl>
             <dt class="subdomain">Subdomain</dt>
             <dd>#{extract_subdomain(exception.url)}</dd>
@@ -52,16 +65,14 @@ $(window).ready () ->
             <dd>#{exception.navigator?.language}</dd>
 
             <dt>Details</dt>
-            <ddt>#{exception.name}: #{exception.type}</dd>
+            <dd>#{exception.name}: #{exception.type}</dd>
 
             <dt class="backtrace">Backtrace</dt>
             <dd>
-              <h4>Outer</h4>
-              #{format_trace exception.outer_backtrace}
-              <h4>Inner</h4>
-              #{format_trace exception.backtrace}
+              <h4 class="toggled">Outer</h4>
+              <p class="trace">#{format_trace exception.outer_backtrace}</p>
+              <h4 class="toggled">Inner</h4>
+              <p class="trace">#{format_trace exception.backtrace}</p>
             </dd>
-        </dd>
+        </li>
         """)
-
-  console.log groups
