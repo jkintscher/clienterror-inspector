@@ -22,15 +22,15 @@ $(window).ready () ->
   for message, exceptions of groups
     exceptions = exceptions.sort (a, b) -> b.time - a.time
 
-    list.append $ """
+    list.append $("""
       <dt>
         <h2>#{message} <span class="count">(#{exceptions.length})</span></h2>
         Latest: <time>#{new Date exceptions[0].time}</time>
       </dt>
-      """
+      """)
 
     for exception in exceptions
-      list.append $ """
+      list.append $("""
         <dd>
           <dl>
             <dt class="subdomain">Subdomain</dt>
@@ -62,6 +62,6 @@ $(window).ready () ->
               #{format_trace exception.backtrace}
             </dd>
         </dd>
-        """
+        """)
 
   console.log groups
