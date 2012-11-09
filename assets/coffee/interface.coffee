@@ -84,7 +84,6 @@ render = (view, groups) ->
 
     subs = "<li><table>"
     for subdomain, count of subdomains
-      console.log subdomain, count
       subs += """
         <tr>
           <td>#{subdomain}</td>
