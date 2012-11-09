@@ -28,9 +28,7 @@
   });
 
   extract_subdomain = function(url) {
-    var b;
-    b = url.replace(/https:\/\/([\w]*)\.harvestapp.*/, '$1');
-    return b;
+    return url.replace(/https:\/\/([\w]*)\.harvestapp.*/, '$1');
   };
 
   format_trace = function(trace) {
@@ -62,7 +60,6 @@
       subs = "<li><table>";
       for (subdomain in subdomains) {
         count = subdomains[subdomain];
-        console.log(subdomain, count);
         subs += "<tr>\n  <td>" + subdomain + "</td>\n  <td>" + count + "</td>\n</tr>";
       }
       subs += "</table></li>";
