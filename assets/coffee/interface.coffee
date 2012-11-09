@@ -42,12 +42,17 @@ render = (view, groups) ->
     list = $('<ol />')
     view.append $('<dd />').append(list)
 
+    subdomains = {}
+
     for exception in exceptions
+      subdomain = extract_subdomain(exception.url)
+      subdomains[subdomain] = if subdomains[subdomain]? then subdomains[subdomain] + 1 else 1
+
       list.append $("""
         <li>
           <dl>
             <dt class="subdomain">Subdomain</dt>
-            <dd>#{extract_subdomain(exception.url)}</dd>
+            <dd>#{subdomain}</dd>
 
             <dt class="timestamp">Timestamp</dt>
             <dd><time>#{new Date exception.time}</time></dd>
@@ -76,3 +81,14 @@ render = (view, groups) ->
             </dd>
         </li>
         """)
+
+    subs = "<li><table>"
+    for subdomain, count of subdomains
+      subs += """
+        <tr>
+          <td>#{subdomain}</td>
+          <td>#{count}</td>
+        </tr>
+      """
+    subs += "</table></li>"
+    list.prepend(subs)
