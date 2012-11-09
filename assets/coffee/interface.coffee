@@ -91,4 +91,4 @@ render = (view, groups) ->
         </tr>
       """
     subs += "</table></li>"
-    list.append(subs)
+    list.prepend(subs)

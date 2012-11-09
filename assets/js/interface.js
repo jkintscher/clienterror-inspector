@@ -63,7 +63,7 @@
         subs += "<tr>\n  <td>" + subdomain + "</td>\n  <td>" + count + "</td>\n</tr>";
       }
       subs += "</table></li>";
-      _results.push(list.append(subs));
+      _results.push(list.prepend(subs));
     }
     return _results;
   };
