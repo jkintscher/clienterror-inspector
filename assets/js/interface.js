@@ -28,7 +28,9 @@
   });
 
   extract_subdomain = function(url) {
-    return url.replace(/https:\/\/([\w]*)\.harvestapp.*/, '$1');
+    var b;
+    b = url.replace(/https:\/\/([\w]*)\.harvestapp.*/, '$1');
+    return b;
   };
 
   format_trace = function(trace) {
@@ -40,7 +42,7 @@
   };
 
   render = function(view, groups) {
-    var exception, exceptions, list, message, _results;
+    var count, exception, exceptions, list, message, subdomain, subdomains, subs, _i, _len, _ref, _ref1, _ref2, _results;
     _results = [];
     for (message in groups) {
       exceptions = groups[message];
@@ -50,15 +52,21 @@
       view.append($("<dt class=\"toggled\">\n  <h2>" + message + " <span class=\"count\">(" + exceptions.length + ")</span></h2>\n  Latest: <time>" + (new Date(exceptions[0].time)) + "</time>\n</dt>"));
       list = $('<ol />');
       view.append($('<dd />').append(list));
-      _results.push((function() {
-        var _i, _len, _ref, _ref1, _ref2, _results1;
-        _results1 = [];
-        for (_i = 0, _len = exceptions.length; _i < _len; _i++) {
-          exception = exceptions[_i];
-          _results1.push(list.append($("<li>\n  <dl>\n    <dt class=\"subdomain\">Subdomain</dt>\n    <dd>" + (extract_subdomain(exception.url)) + "</dd>\n\n    <dt class=\"timestamp\">Timestamp</dt>\n    <dd><time>" + (new Date(exception.time)) + "</time></dd>\n\n    <dt class=\"url\">URL</dt>\n    <dd>" + exception.url + "</dd>\n\n    <dt class=\"browser\">Browser</dt>\n    <dd>" + ((_ref = exception.navigator) != null ? _ref.userAgent : void 0) + "</dd>\n\n    <dt class=\"platform\">Platform</dt>\n    <dd>" + ((_ref1 = exception.navigator) != null ? _ref1.platform : void 0) + "</dd>\n\n    <dt class=\"language\">Language</dt>\n    <dd>" + ((_ref2 = exception.navigator) != null ? _ref2.language : void 0) + "</dd>\n\n    <dt>Details</dt>\n    <dd>" + exception.name + ": " + exception.type + "</dd>\n\n    <dt class=\"backtrace\">Backtrace</dt>\n    <dd>\n      <h4 class=\"toggled\">Outer</h4>\n      <p class=\"trace\">" + (format_trace(exception.outer_backtrace)) + "</p>\n      <h4 class=\"toggled\">Inner</h4>\n      <p class=\"trace\">" + (format_trace(exception.backtrace)) + "</p>\n    </dd>\n</li>")));
-        }
-        return _results1;
-      })());
+      subdomains = {};
+      for (_i = 0, _len = exceptions.length; _i < _len; _i++) {
+        exception = exceptions[_i];
+        subdomain = extract_subdomain(exception.url);
+        subdomains[subdomain] = subdomains[subdomain] != null ? subdomains[subdomain] + 1 : 1;
+        list.append($("<li>\n  <dl>\n    <dt class=\"subdomain\">Subdomain</dt>\n    <dd>" + subdomain + "</dd>\n\n    <dt class=\"timestamp\">Timestamp</dt>\n    <dd><time>" + (new Date(exception.time)) + "</time></dd>\n\n    <dt class=\"url\">URL</dt>\n    <dd>" + exception.url + "</dd>\n\n    <dt class=\"browser\">Browser</dt>\n    <dd>" + ((_ref = exception.navigator) != null ? _ref.userAgent : void 0) + "</dd>\n\n    <dt class=\"platform\">Platform</dt>\n    <dd>" + ((_ref1 = exception.navigator) != null ? _ref1.platform : void 0) + "</dd>\n\n    <dt class=\"language\">Language</dt>\n    <dd>" + ((_ref2 = exception.navigator) != null ? _ref2.language : void 0) + "</dd>\n\n    <dt>Details</dt>\n    <dd>" + exception.name + ": " + exception.type + "</dd>\n\n    <dt class=\"backtrace\">Backtrace</dt>\n    <dd>\n      <h4 class=\"toggled\">Outer</h4>\n      <p class=\"trace\">" + (format_trace(exception.outer_backtrace)) + "</p>\n      <h4 class=\"toggled\">Inner</h4>\n      <p class=\"trace\">" + (format_trace(exception.backtrace)) + "</p>\n    </dd>\n</li>"));
+      }
+      subs = "<li><table>";
+      for (subdomain in subdomains) {
+        count = subdomains[subdomain];
+        console.log(subdomain, count);
+        subs += "<tr>\n  <td>" + subdomain + "</td>\n  <td>" + count + "</td>\n</tr>";
+      }
+      subs += "</table></li>";
+      _results.push(list.append(subs));
     }
     return _results;
   };
