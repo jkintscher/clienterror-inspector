@@ -14,8 +14,8 @@ Setup
 
 2. `$ chmod u+w parse` to make the script executable (only needed once)
 
-3. `$ ./parse` to parse the `CSV` file
+3. `$ ./parse.rb` to parse the `CSV` file
 
-4. Open the `index.html` in your browser by dragging it on to the icon in your dock (or with `open index.html`)
+4. Open `index.html` in your browser
 
 5. Inspect.
