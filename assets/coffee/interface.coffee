@@ -48,7 +48,7 @@ render = (view, groups) ->
       subdomain = extract_subdomain(exception.url)
       subdomains[subdomain] = if subdomains[subdomain]? then subdomains[subdomain] + 1 else 1
 
-      list.append $("""
+      li = $("""
         <li>
           <dl>
             <dt class="subdomain">Subdomain</dt>
@@ -72,6 +72,9 @@ render = (view, groups) ->
             <dt>Details</dt>
             <dd>#{exception.name}: #{exception.type}</dd>
 
+            <dt class="arguments">Arguments</dt>
+            <dd><a href="#">Click to debug scope's arguments with <code>console.dir()</code></a></dd>
+
             <dt class="backtrace">Backtrace</dt>
             <dd>
               <h4 class="toggled">Outer</h4>
@@ -79,8 +82,15 @@ render = (view, groups) ->
               <h4 class="toggled">Inner</h4>
               <p class="trace">#{format_trace exception.backtrace}</p>
             </dd>
+          </dl>
         </li>
         """)
+
+      li.find('.arguments + dd a').data('arguments', exception.arguments).click (e) ->
+        e.preventDefault()
+        console.dir $(this).data('arguments')
+
+      list.append li
 
     subs = "<li><table>"
     for subdomain, count of subdomains

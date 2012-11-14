@@ -40,7 +40,7 @@
   };
 
   render = function(view, groups) {
-    var count, exception, exceptions, list, message, subdomain, subdomains, subs, _i, _len, _ref, _ref1, _ref2, _results;
+    var count, exception, exceptions, li, list, message, subdomain, subdomains, subs, _i, _len, _ref, _ref1, _ref2, _results;
     _results = [];
     for (message in groups) {
       exceptions = groups[message];
@@ -55,7 +55,12 @@
         exception = exceptions[_i];
         subdomain = extract_subdomain(exception.url);
         subdomains[subdomain] = subdomains[subdomain] != null ? subdomains[subdomain] + 1 : 1;
-        list.append($("<li>\n  <dl>\n    <dt class=\"subdomain\">Subdomain</dt>\n    <dd>" + subdomain + "</dd>\n\n    <dt class=\"timestamp\">Timestamp</dt>\n    <dd><time>" + (new Date(exception.time)) + "</time></dd>\n\n    <dt class=\"url\">URL</dt>\n    <dd>" + exception.url + "</dd>\n\n    <dt class=\"browser\">Browser</dt>\n    <dd>" + ((_ref = exception.navigator) != null ? _ref.userAgent : void 0) + "</dd>\n\n    <dt class=\"platform\">Platform</dt>\n    <dd>" + ((_ref1 = exception.navigator) != null ? _ref1.platform : void 0) + "</dd>\n\n    <dt class=\"language\">Language</dt>\n    <dd>" + ((_ref2 = exception.navigator) != null ? _ref2.language : void 0) + "</dd>\n\n    <dt>Details</dt>\n    <dd>" + exception.name + ": " + exception.type + "</dd>\n\n    <dt class=\"backtrace\">Backtrace</dt>\n    <dd>\n      <h4 class=\"toggled\">Outer</h4>\n      <p class=\"trace\">" + (format_trace(exception.outer_backtrace)) + "</p>\n      <h4 class=\"toggled\">Inner</h4>\n      <p class=\"trace\">" + (format_trace(exception.backtrace)) + "</p>\n    </dd>\n</li>"));
+        li = $("<li>\n  <dl>\n    <dt class=\"subdomain\">Subdomain</dt>\n    <dd>" + subdomain + "</dd>\n\n    <dt class=\"timestamp\">Timestamp</dt>\n    <dd><time>" + (new Date(exception.time)) + "</time></dd>\n\n    <dt class=\"url\">URL</dt>\n    <dd>" + exception.url + "</dd>\n\n    <dt class=\"browser\">Browser</dt>\n    <dd>" + ((_ref = exception.navigator) != null ? _ref.userAgent : void 0) + "</dd>\n\n    <dt class=\"platform\">Platform</dt>\n    <dd>" + ((_ref1 = exception.navigator) != null ? _ref1.platform : void 0) + "</dd>\n\n    <dt class=\"language\">Language</dt>\n    <dd>" + ((_ref2 = exception.navigator) != null ? _ref2.language : void 0) + "</dd>\n\n    <dt>Details</dt>\n    <dd>" + exception.name + ": " + exception.type + "</dd>\n\n    <dt class=\"arguments\">Arguments</dt>\n    <dd><a href=\"#\">Click to debug scope's arguments with <code>console.dir()</code></a></dd>\n\n    <dt class=\"backtrace\">Backtrace</dt>\n    <dd>\n      <h4 class=\"toggled\">Outer</h4>\n      <p class=\"trace\">" + (format_trace(exception.outer_backtrace)) + "</p>\n      <h4 class=\"toggled\">Inner</h4>\n      <p class=\"trace\">" + (format_trace(exception.backtrace)) + "</p>\n    </dd>\n  </dl>\n</li>");
+        li.find('.arguments + dd a').data('arguments', exception["arguments"]).click(function(e) {
+          e.preventDefault();
+          return console.dir($(this).data('arguments'));
+        });
+        list.append(li);
       }
       subs = "<li><table>";
       for (subdomain in subdomains) {
