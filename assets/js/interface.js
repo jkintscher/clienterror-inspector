@@ -69,6 +69,8 @@
             li.find(".args-spot").html(args);
             break;
           }
+        } else if (exception["arguments"] && typeof exception["arguments"] === "string") {
+          li.find(".args-spot").html(exception["arguments"]);
         }
         list.append(li);
       }

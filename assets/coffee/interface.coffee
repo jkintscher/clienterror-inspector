@@ -95,6 +95,8 @@ render = (view, groups) ->
           args = $("<span />", {class: "exception-argument-object"}).text("click to show object in console").data("exception-arg",window.exception_arguments.length-1)
           li.find(".args-spot").html args
           break
+      else if exception.arguments and typeof exception.arguments is "string"
+        li.find(".args-spot").html exception.arguments
       list.append li
 
     subs = "<li><table>"
