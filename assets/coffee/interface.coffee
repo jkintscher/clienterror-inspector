@@ -19,6 +19,9 @@ $(window).ready () ->
   list.find('.backtrace + dd h4').click (e) ->
     $(e.target).toggleClass 'toggled'
 
+  list.on 'click', '.exception-argument-object', (e) ->
+    console.dir window.exception_arguments[$(e.target).data("exception-arg")]
+
 
 extract_subdomain = (url) ->
   url.replace /https:\/\/([\w]*)\.harvestapp.*/, '$1'
@@ -29,6 +32,8 @@ format_trace = (trace) ->
   trace.replace /\(https:\/\/[\w\/\.]*\/([\w]*\.js)\?[\d]*:[\d]*:([\d]*)\)/ig, '<small class="file">($1:$2)</small>'
 
 render = (view, groups) ->
+  window.exception_arguments = []
+
   for message, exceptions of groups
     exceptions = exceptions.sort (a, b) -> b.time - a.time
 
@@ -48,39 +53,49 @@ render = (view, groups) ->
       subdomain = extract_subdomain(exception.url)
       subdomains[subdomain] = if subdomains[subdomain]? then subdomains[subdomain] + 1 else 1
 
-      list.append $("""
-        <li>
-          <dl>
-            <dt class="subdomain">Subdomain</dt>
-            <dd>#{subdomain}</dd>
+      li = $("<li />").html("""
+        <dl>
+          <dt class="subdomain">Subdomain</dt>
+          <dd>#{subdomain}</dd>
 
-            <dt class="timestamp">Timestamp</dt>
-            <dd><time>#{new Date exception.time}</time></dd>
+          <dt class="timestamp">Timestamp</dt>
+          <dd><time>#{new Date exception.time}</time></dd>
 
-            <dt class="url">URL</dt>
-            <dd>#{exception.url}</dd>
+          <dt class="url">URL</dt>
+          <dd>#{exception.url}</dd>
 
-            <dt class="browser">Browser</dt>
-            <dd>#{exception.navigator?.userAgent}</dd>
+          <dt class="browser">Browser</dt>
+          <dd>#{exception.navigator?.userAgent}</dd>
 
-            <dt class="platform">Platform</dt>
-            <dd>#{exception.navigator?.platform}</dd>
+          <dt class="platform">Platform</dt>
+          <dd>#{exception.navigator?.platform}</dd>
 
-            <dt class="language">Language</dt>
-            <dd>#{exception.navigator?.language}</dd>
+          <dt class="language">Language</dt>
+          <dd>#{exception.navigator?.language}</dd>
 
-            <dt>Details</dt>
-            <dd>#{exception.name}: #{exception.type}</dd>
+          <dt>Details</dt>
+          <dd>#{exception.name}: #{exception.type}</dd>
 
-            <dt class="backtrace">Backtrace</dt>
-            <dd>
-              <h4 class="toggled">Outer</h4>
-              <p class="trace">#{format_trace exception.outer_backtrace}</p>
-              <h4 class="toggled">Inner</h4>
-              <p class="trace">#{format_trace exception.backtrace}</p>
-            </dd>
-        </li>
-        """)
+          <dt>Arguments</dt>
+          <dd class="args-spot">n/a</dd>
+
+          <dt class="backtrace">Backtrace</dt>
+          <dd>
+            <h4 class="toggled">Outer</h4>
+            <p class="trace">#{format_trace exception.outer_backtrace}</p>
+            <h4 class="toggled">Inner</h4>
+            <p class="trace">#{format_trace exception.backtrace}</p>
+          </dd>
+        </dl>
+      """)
+
+      if exception.arguments and typeof exception.arguments is "object"
+        for prop of exception.arguments
+          window.exception_arguments.push exception.arguments
+          args = $("<span />", {class: "exception-argument-object"}).text("click to show object in console").data("exception-arg",window.exception_arguments.length-1)
+          li.find(".args-spot").html args
+          break
+      list.append li
 
     subs = "<li><table>"
     for subdomain, count of subdomains

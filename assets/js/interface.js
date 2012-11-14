@@ -22,8 +22,11 @@
       head = e.target.nodeName !== 'DT' ? $(e.target).parent() : $(e.target);
       return head.toggleClass('toggled');
     });
-    return list.find('.backtrace + dd h4').click(function(e) {
+    list.find('.backtrace + dd h4').click(function(e) {
       return $(e.target).toggleClass('toggled');
+    });
+    return list.on('click', '.exception-argument-object', function(e) {
+      return console.dir(window.exception_arguments[$(e.target).data("exception-arg")]);
     });
   });
 
@@ -40,7 +43,8 @@
   };
 
   render = function(view, groups) {
-    var count, exception, exceptions, list, message, subdomain, subdomains, subs, _i, _len, _ref, _ref1, _ref2, _results;
+    var args, count, exception, exceptions, li, list, message, prop, subdomain, subdomains, subs, _i, _len, _ref, _ref1, _ref2, _results;
+    window.exception_arguments = [];
     _results = [];
     for (message in groups) {
       exceptions = groups[message];
@@ -55,7 +59,18 @@
         exception = exceptions[_i];
         subdomain = extract_subdomain(exception.url);
         subdomains[subdomain] = subdomains[subdomain] != null ? subdomains[subdomain] + 1 : 1;
-        list.append($("<li>\n  <dl>\n    <dt class=\"subdomain\">Subdomain</dt>\n    <dd>" + subdomain + "</dd>\n\n    <dt class=\"timestamp\">Timestamp</dt>\n    <dd><time>" + (new Date(exception.time)) + "</time></dd>\n\n    <dt class=\"url\">URL</dt>\n    <dd>" + exception.url + "</dd>\n\n    <dt class=\"browser\">Browser</dt>\n    <dd>" + ((_ref = exception.navigator) != null ? _ref.userAgent : void 0) + "</dd>\n\n    <dt class=\"platform\">Platform</dt>\n    <dd>" + ((_ref1 = exception.navigator) != null ? _ref1.platform : void 0) + "</dd>\n\n    <dt class=\"language\">Language</dt>\n    <dd>" + ((_ref2 = exception.navigator) != null ? _ref2.language : void 0) + "</dd>\n\n    <dt>Details</dt>\n    <dd>" + exception.name + ": " + exception.type + "</dd>\n\n    <dt class=\"backtrace\">Backtrace</dt>\n    <dd>\n      <h4 class=\"toggled\">Outer</h4>\n      <p class=\"trace\">" + (format_trace(exception.outer_backtrace)) + "</p>\n      <h4 class=\"toggled\">Inner</h4>\n      <p class=\"trace\">" + (format_trace(exception.backtrace)) + "</p>\n    </dd>\n</li>"));
+        li = $("<li />").html("<dl>\n  <dt class=\"subdomain\">Subdomain</dt>\n  <dd>" + subdomain + "</dd>\n\n  <dt class=\"timestamp\">Timestamp</dt>\n  <dd><time>" + (new Date(exception.time)) + "</time></dd>\n\n  <dt class=\"url\">URL</dt>\n  <dd>" + exception.url + "</dd>\n\n  <dt class=\"browser\">Browser</dt>\n  <dd>" + ((_ref = exception.navigator) != null ? _ref.userAgent : void 0) + "</dd>\n\n  <dt class=\"platform\">Platform</dt>\n  <dd>" + ((_ref1 = exception.navigator) != null ? _ref1.platform : void 0) + "</dd>\n\n  <dt class=\"language\">Language</dt>\n  <dd>" + ((_ref2 = exception.navigator) != null ? _ref2.language : void 0) + "</dd>\n\n  <dt>Details</dt>\n  <dd>" + exception.name + ": " + exception.type + "</dd>\n\n  <dt>Arguments</dt>\n  <dd class=\"args-spot\">n/a</dd>\n\n  <dt class=\"backtrace\">Backtrace</dt>\n  <dd>\n    <h4 class=\"toggled\">Outer</h4>\n    <p class=\"trace\">" + (format_trace(exception.outer_backtrace)) + "</p>\n    <h4 class=\"toggled\">Inner</h4>\n    <p class=\"trace\">" + (format_trace(exception.backtrace)) + "</p>\n  </dd>\n</dl>");
+        if (exception["arguments"] && typeof exception["arguments"] === "object") {
+          for (prop in exception["arguments"]) {
+            window.exception_arguments.push(exception["arguments"]);
+            args = $("<span />", {
+              "class": "exception-argument-object"
+            }).text("click to show object in console").data("exception-arg", window.exception_arguments.length - 1);
+            li.find(".args-spot").html(args);
+            break;
+          }
+        }
+        list.append(li);
       }
       subs = "<li><table>";
       for (subdomain in subdomains) {
