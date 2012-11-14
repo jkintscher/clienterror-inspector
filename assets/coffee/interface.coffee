@@ -89,14 +89,7 @@ render = (view, groups) ->
         </dl>
       """)
 
-      if exception.arguments and typeof exception.arguments is "object"
-        for prop of exception.arguments
-          window.exception_arguments.push exception.arguments
-          args = $("<span />", {class: "exception-argument-object"}).text("click to show object in console").data("exception-arg",window.exception_arguments.length-1)
-          li.find(".args-spot").html args
-          break
-      else if exception.arguments and typeof exception.arguments is "string"
-        li.find(".args-spot").html exception.arguments
+      add_exception_arguments exception.arguments, li if exception.arguments?
       list.append li
 
     subs = "<li><table>"
@@ -109,3 +102,14 @@ render = (view, groups) ->
       """
     subs += "</table></li>"
     list.prepend(subs)
+
+add_exception_arguments = (args, li) ->
+  if typeof args is "object"
+    for prop of args
+      window.exception_arguments.push args
+      show_args = $("<span />", {class: "exception-argument-object"}).text("click to show object in console").data("exception-arg",window.exception_arguments.length-1)
+      li.find(".args-spot").html show_args
+      break
+  else if typeof args is "string"
+    li.find(".args-spot").html args
+  return
