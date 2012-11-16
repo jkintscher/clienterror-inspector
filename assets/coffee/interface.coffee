@@ -64,8 +64,11 @@ render = (view, groups) ->
             <dt class="url">URL</dt>
             <dd>#{exception.url}</dd>
 
-            <dt class="browser">Browser</dt>
+            <dt class="browser">UserAgent</dt>
             <dd>#{exception.navigator?.userAgent}</dd>
+
+            <dt class="browser">Browser</dt>
+            <dd>#{browz}</dd>
 
             <dt class="platform">Platform</dt>
             <dd>#{exception.navigator?.platform}</dd>
