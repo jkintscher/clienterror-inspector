@@ -31,6 +31,18 @@ format_trace = (trace) ->
   trace = trace.replace /\n/g, '<br />'
   trace.replace /\(https:\/\/[\w\/\.]*\/([\w]*\.js)\?[\d]*:[\d]*:([\d]*)\)/ig, '<small class="file">($1:$2)</small>'
 
+add_exception_arguments = (args, li) ->
+  if typeof args is 'object'
+    for prop of args
+      window.exception_arguments.push args
+      show_args = $('<span />', class: 'exception-argument-object')
+        .text('click to show object in console')
+        .data('exception-arg', window.exception_arguments.length-1)
+      li.find('.args-spot').html show_args
+      break
+  else if typeof args is 'string'
+    li.find('.args-spot').html args
+
 render = (view, groups) ->
   window.exception_arguments = []
 
@@ -102,15 +114,3 @@ render = (view, groups) ->
       """
     subs += '</table></li>'
     list.prepend(subs)
-
-add_exception_arguments = (args, li) ->
-  if typeof args is 'object'
-    for prop of args
-      window.exception_arguments.push args
-      show_args = $('<span />', class: 'exception-argument-object')
-        .text("click to show object in console")
-        .data('exception-arg', window.exception_arguments.length-1)
-      li.find('.args-spot').html show_args
-      break
-  else if typeof args is 'string'
-    li.find('.args-spot').html args

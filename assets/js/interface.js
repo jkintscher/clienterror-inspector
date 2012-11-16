@@ -42,6 +42,24 @@
     return trace.replace(/\(https:\/\/[\w\/\.]*\/([\w]*\.js)\?[\d]*:[\d]*:([\d]*)\)/ig, '<small class="file">($1:$2)</small>');
   };
 
+  add_exception_arguments = function(args, li) {
+    var prop, show_args, _results;
+    if (typeof args === 'object') {
+      _results = [];
+      for (prop in args) {
+        window.exception_arguments.push(args);
+        show_args = $('<span />', {
+          "class": 'exception-argument-object'
+        }).text('click to show object in console').data('exception-arg', window.exception_arguments.length - 1);
+        li.find('.args-spot').html(show_args);
+        break;
+      }
+      return _results;
+    } else if (typeof args === 'string') {
+      return li.find('.args-spot').html(args);
+    }
+  };
+
   render = function(view, groups) {
     var count, exception, exceptions, li, list, message, subdomain, subdomains, subs, _i, _len, _ref, _ref1, _ref2, _results;
     window.exception_arguments = [];
@@ -74,24 +92,6 @@
       _results.push(list.prepend(subs));
     }
     return _results;
-  };
-
-  add_exception_arguments = function(args, li) {
-    var prop, show_args, _results;
-    if (typeof args === 'object') {
-      _results = [];
-      for (prop in args) {
-        window.exception_arguments.push(args);
-        show_args = $('<span />', {
-          "class": 'exception-argument-object'
-        }).text("click to show object in console").data('exception-arg', window.exception_arguments.length - 1);
-        li.find('.args-spot').html(show_args);
-        break;
-      }
-      return _results;
-    } else if (typeof args === 'string') {
-      return li.find('.args-spot').html(args);
-    }
   };
 
 }).call(this);
