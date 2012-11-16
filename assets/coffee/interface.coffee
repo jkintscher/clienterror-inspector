@@ -43,10 +43,14 @@ render = (view, groups) ->
     view.append $('<dd />').append(list)
 
     subdomains = {}
+    browsers = {}
 
     for exception in exceptions
       subdomain = extract_subdomain(exception.url)
       subdomains[subdomain] = if subdomains[subdomain]? then subdomains[subdomain] + 1 else 1
+
+      browz = if exception.navigator?.userAgent? then BrowserDetect.parse exception.navigator?.userAgent else "unknown"
+      browsers[browz] = if browsers[browz]? then browsers[browz] + 1 else 1
 
       list.append $("""
         <li>
@@ -92,3 +96,14 @@ render = (view, groups) ->
       """
     subs += "</table></li>"
     list.prepend(subs)
+
+    brows = '<li><table>'
+    for browser, count of browsers
+      brows += """
+        <tr>
+          <td>#{browser}</td>
+          <td>#{count}</td>
+        </tr>
+      """
+    brows += '</table></li>'
+    list.prepend(brows)
