@@ -65,30 +65,32 @@
         }
         list.append(li);
       }
-      subs = "<li><table>";
+      subs = '<li><table>';
       for (subdomain in subdomains) {
         count = subdomains[subdomain];
         subs += "<tr>\n  <td>" + subdomain + "</td>\n  <td>" + count + "</td>\n</tr>";
       }
-      subs += "</table></li>";
+      subs += '</table></li>';
       _results.push(list.prepend(subs));
     }
     return _results;
   };
 
   add_exception_arguments = function(args, li) {
-    var prop, show_args;
-    if (typeof args === "object") {
+    var prop, show_args, _results;
+    if (typeof args === 'object') {
+      _results = [];
       for (prop in args) {
         window.exception_arguments.push(args);
-        show_args = $("<span />", {
-          "class": "exception-argument-object"
-        }).text("click to show object in console").data("exception-arg", window.exception_arguments.length - 1);
-        li.find(".args-spot").html(show_args);
+        show_args = $('<span />', {
+          "class": 'exception-argument-object'
+        }).text("click to show object in console").data('exception-arg', window.exception_arguments.length - 1);
+        li.find('.args-spot').html(show_args);
         break;
       }
-    } else if (typeof args === "string") {
-      li.find(".args-spot").html(args);
+      return _results;
+    } else if (typeof args === 'string') {
+      return li.find('.args-spot').html(args);
     }
   };
 

@@ -53,7 +53,7 @@ render = (view, groups) ->
       subdomain = extract_subdomain(exception.url)
       subdomains[subdomain] = if subdomains[subdomain]? then subdomains[subdomain] + 1 else 1
 
-      li = $("<li />").html("""
+      li = $("<li />").html """
         <dl>
           <dt class="subdomain">Subdomain</dt>
           <dd>#{subdomain}</dd>
@@ -87,12 +87,12 @@ render = (view, groups) ->
             <p class="trace">#{format_trace exception.backtrace}</p>
           </dd>
         </dl>
-      """)
+      """
 
       add_exception_arguments exception.arguments, li if exception.arguments?
       list.append li
 
-    subs = "<li><table>"
+    subs = '<li><table>'
     for subdomain, count of subdomains
       subs += """
         <tr>
@@ -100,16 +100,17 @@ render = (view, groups) ->
           <td>#{count}</td>
         </tr>
       """
-    subs += "</table></li>"
+    subs += '</table></li>'
     list.prepend(subs)
 
 add_exception_arguments = (args, li) ->
-  if typeof args is "object"
+  if typeof args is 'object'
     for prop of args
       window.exception_arguments.push args
-      show_args = $("<span />", {class: "exception-argument-object"}).text("click to show object in console").data("exception-arg",window.exception_arguments.length-1)
-      li.find(".args-spot").html show_args
+      show_args = $('<span />', class: 'exception-argument-object')
+        .text("click to show object in console")
+        .data('exception-arg', window.exception_arguments.length-1)
+      li.find('.args-spot').html show_args
       break
-  else if typeof args is "string"
-    li.find(".args-spot").html args
-  return
+  else if typeof args is 'string'
+    li.find('.args-spot').html args
