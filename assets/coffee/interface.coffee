@@ -91,6 +91,9 @@ render = (view, groups) ->
           <dt>Arguments</dt>
           <dd class="args-spot">n/a</dd>
 
+          <dt>Watched</dt>
+          <dd>#{exception.watched}</dd>
+
           <dt class="backtrace">Backtrace</dt>
           <dd>
             <h4 class="toggled">Outer</h4>
